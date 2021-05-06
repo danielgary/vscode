@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { URI } from 'vs/base/common/uri';
-import { IFileEditorInput, Verbosity, GroupIdentifier, IMoveResult, isTextEditorPane, decorateFileEditorLabel } from 'vs/workbench/common/editor';
+import { IFileEditorInput, Verbosity, GroupIdentifier, IMoveResult, isTextEditorPane } from 'vs/workbench/common/editor';
 import { AbstractTextResourceEditorInput } from 'vs/workbench/common/editor/textResourceEditorInput';
 import { BinaryEditorModel } from 'vs/workbench/common/editor/binaryEditorModel';
 import { FileOperationError, FileOperationResult, IFileService } from 'vs/platform/files/common/files';
@@ -125,7 +125,7 @@ export class FileEditorInput extends AbstractTextResourceEditorInput implements 
 	}
 
 	override getName(): string {
-		return this.preferredName || this.decorateLabel(super.getName());
+		return this.preferredName || super.getName();
 	}
 
 	setPreferredName(name: string): void {
@@ -166,23 +166,6 @@ export class FileEditorInput extends AbstractTextResourceEditorInput implements 
 
 	getPreferredDescription(): string | undefined {
 		return this.preferredDescription;
-	}
-
-	override getTitle(verbosity: Verbosity): string {
-		switch (verbosity) {
-			case Verbosity.SHORT:
-				return this.decorateLabel(super.getName());
-			case Verbosity.MEDIUM:
-			case Verbosity.LONG:
-				return this.decorateLabel(super.getTitle(verbosity));
-		}
-	}
-
-	private decorateLabel(label: string): string {
-		const orphaned = this.model?.hasState(TextFileEditorModelState.ORPHAN);
-		const readonly = this.isReadonly();
-
-		return decorateFileEditorLabel(label, { orphaned: !!orphaned, readonly });
 	}
 
 	getEncoding(): string | undefined {
@@ -245,6 +228,14 @@ export class FileEditorInput extends AbstractTextResourceEditorInput implements 
 		}
 
 		return super.isReadonly();
+	}
+
+	override isOrphaned(): boolean {
+		if (this.model) {
+			return this.model.hasState(TextFileEditorModelState.ORPHAN);
+		}
+
+		return super.isOrphaned();
 	}
 
 	override isSaving(): boolean {

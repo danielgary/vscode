@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { localize } from 'vs/nls';
 import { EditorInput, Verbosity, IEditorInputWithPreferredResource } from 'vs/workbench/common/editor';
 import { URI } from 'vs/base/common/uri';
 import { IFileService, FileSystemProviderCapabilities } from 'vs/platform/files/common/files';
@@ -68,15 +69,15 @@ export abstract class AbstractResourceEditorInput extends EditorInput implements
 	}
 
 	private _name: string | undefined = undefined;
-	override getName(): string {
+	override getName(skipDecorate?: boolean): string {
 		if (typeof this._name !== 'string') {
 			this._name = this.labelService.getUriBasenameLabel(this._preferredResource);
 		}
 
-		return this._name;
+		return skipDecorate ? this._name : this.decorateLabel(this._name);
 	}
 
-	override getDescription(verbosity: Verbosity = Verbosity.MEDIUM): string | undefined {
+	override getDescription(verbosity = Verbosity.MEDIUM): string | undefined {
 		switch (verbosity) {
 			case Verbosity.SHORT:
 				return this.shortDescription;
@@ -118,7 +119,7 @@ export abstract class AbstractResourceEditorInput extends EditorInput implements
 	private _shortTitle: string | undefined = undefined;
 	private get shortTitle(): string {
 		if (typeof this._shortTitle !== 'string') {
-			this._shortTitle = this.getName();
+			this._shortTitle = this.getName(true /* skip decorations */);
 		}
 
 		return this._shortTitle;
@@ -142,16 +143,35 @@ export abstract class AbstractResourceEditorInput extends EditorInput implements
 		return this._longTitle;
 	}
 
-	override getTitle(verbosity: Verbosity): string {
+	override getTitle(verbosity?: Verbosity): string {
 		switch (verbosity) {
 			case Verbosity.SHORT:
-				return this.shortTitle;
+				return this.decorateLabel(this.shortTitle);
 			case Verbosity.LONG:
-				return this.longTitle;
+				return this.decorateLabel(this.longTitle);
 			default:
 			case Verbosity.MEDIUM:
-				return this.mediumTitle;
+				return this.decorateLabel(this.mediumTitle);
 		}
+	}
+
+	private decorateLabel(label: string): string {
+		const readonly = this.isReadonly();
+		const orphaned = this.isOrphaned();
+
+		if (readonly && orphaned) {
+			return localize('orphanedReadonlyResource', "{0} (deleted, read-only)", label);
+		}
+
+		if (orphaned) {
+			return localize('orphanedResource', "{0} (deleted)", label);
+		}
+
+		if (readonly) {
+			return localize('readonlyResource', "{0} (read-only)", label);
+		}
+
+		return label;
 	}
 
 	override isUntitled(): boolean {
@@ -164,5 +184,9 @@ export abstract class AbstractResourceEditorInput extends EditorInput implements
 		}
 
 		return this.fileService.hasCapability(this.resource, FileSystemProviderCapabilities.Readonly);
+	}
+
+	isOrphaned(): boolean {
+		return false;
 	}
 }
