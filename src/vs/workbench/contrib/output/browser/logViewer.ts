@@ -12,7 +12,7 @@ import { ITextResourceConfigurationService } from 'vs/editor/common/services/tex
 import { IInstantiationService } from 'vs/platform/instantiation/common/instantiation';
 import { AbstractTextResourceEditor } from 'vs/workbench/browser/parts/editor/textResourceEditor';
 import { IThemeService } from 'vs/platform/theme/common/themeService';
-import { ResourceEditorInput } from 'vs/workbench/common/editor/resourceEditorInput';
+import { TextResourceEditorInput } from 'vs/workbench/common/editor/textResourceEditorInput';
 import { URI } from 'vs/base/common/uri';
 import { ITextModelService } from 'vs/editor/common/services/resolverService';
 import { LOG_SCHEME } from 'vs/workbench/contrib/output/common/output';
@@ -24,7 +24,7 @@ import { IFileService } from 'vs/platform/files/common/files';
 import { ILabelService } from 'vs/platform/label/common/label';
 import { IFilesConfigurationService } from 'vs/workbench/services/filesConfiguration/common/filesConfigurationService';
 
-export class LogViewerInput extends ResourceEditorInput {
+export class LogViewerInput extends TextResourceEditorInput {
 
 	static override readonly ID = 'workbench.editorinputs.output';
 

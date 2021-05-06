@@ -9,7 +9,7 @@ import { ITextModelService } from 'vs/editor/common/services/resolverService';
 import * as nls from 'vs/nls';
 import { IInstantiationService } from 'vs/platform/instantiation/common/instantiation';
 import { EditorInput, SideBySideEditorInput, Verbosity } from 'vs/workbench/common/editor';
-import { ResourceEditorInput } from 'vs/workbench/common/editor/resourceEditorInput';
+import { TextResourceEditorInput } from 'vs/workbench/common/editor/textResourceEditorInput';
 import { KeybindingsEditorModel } from 'vs/workbench/services/preferences/browser/keybindingsEditorModel';
 import { IPreferencesService } from 'vs/workbench/services/preferences/common/preferences';
 import { Settings2EditorModel } from 'vs/workbench/services/preferences/common/preferencesModels';
@@ -33,7 +33,7 @@ export class PreferencesEditorInput extends SideBySideEditorInput {
 	}
 }
 
-export class DefaultPreferencesEditorInput extends ResourceEditorInput {
+export class DefaultPreferencesEditorInput extends TextResourceEditorInput {
 	static override readonly ID = 'workbench.editorinputs.defaultpreferences';
 	constructor(
 		defaultSettingsResource: URI,

@@ -5,7 +5,7 @@
 
 import { localize } from 'vs/nls';
 import { URI } from 'vs/base/common/uri';
-import { ResourceEditorInput } from 'vs/workbench/common/editor/resourceEditorInput';
+import { TextResourceEditorInput } from 'vs/workbench/common/editor/textResourceEditorInput';
 import { ITextModelService, ITextModelContentProvider } from 'vs/editor/common/services/resolverService';
 import { ITextModel } from 'vs/editor/common/model';
 import { ILifecycleService, LifecyclePhase, StartupKindToString } from 'vs/workbench/services/lifecycle/common/lifecycle';
@@ -43,7 +43,7 @@ export class PerfviewContrib {
 	}
 }
 
-export class PerfviewInput extends ResourceEditorInput {
+export class PerfviewInput extends TextResourceEditorInput {
 
 	static readonly Id = 'PerfviewInput';
 	static readonly Uri = URI.from({ scheme: 'perf', path: 'Startup Performance' });
