@@ -21,10 +21,8 @@ import { LoaderStats } from 'vs/base/common/amd';
 import { IProductService } from 'vs/platform/product/common/productService';
 import { ITextFileService } from 'vs/workbench/services/textfile/common/textfiles';
 import { IEditorService } from 'vs/workbench/services/editor/common/editorService';
-import { IEditorGroupsService } from 'vs/workbench/services/editor/common/editorGroupsService';
 import { ByteSize, IFileService } from 'vs/platform/files/common/files';
 import { ILabelService } from 'vs/platform/label/common/label';
-import { IFilesConfigurationService } from 'vs/workbench/services/filesConfiguration/common/filesConfigurationService';
 import { isWeb } from 'vs/base/common/platform';
 
 export class PerfviewContrib {
@@ -56,10 +54,8 @@ export class PerfviewInput extends TextResourceEditorInput {
 		@ITextModelService textModelResolverService: ITextModelService,
 		@ITextFileService textFileService: ITextFileService,
 		@IEditorService editorService: IEditorService,
-		@IEditorGroupsService editorGroupService: IEditorGroupsService,
 		@IFileService fileService: IFileService,
-		@ILabelService labelService: ILabelService,
-		@IFilesConfigurationService filesConfigurationService: IFilesConfigurationService
+		@ILabelService labelService: ILabelService
 	) {
 		super(
 			PerfviewInput.Uri,
@@ -69,10 +65,8 @@ export class PerfviewInput extends TextResourceEditorInput {
 			textModelResolverService,
 			textFileService,
 			editorService,
-			editorGroupService,
 			fileService,
-			labelService,
-			filesConfigurationService
+			labelService
 		);
 	}
 }

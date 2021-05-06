@@ -16,7 +16,6 @@ import { FILE_EDITOR_INPUT_ID, TEXT_FILE_EDITOR_ID, BINARY_FILE_EDITOR_ID } from
 import { ILabelService } from 'vs/platform/label/common/label';
 import { AutoSaveMode, IFilesConfigurationService } from 'vs/workbench/services/filesConfiguration/common/filesConfigurationService';
 import { IEditorService } from 'vs/workbench/services/editor/common/editorService';
-import { IEditorGroupsService } from 'vs/workbench/services/editor/common/editorGroupsService';
 import { isEqual } from 'vs/base/common/resources';
 import { Event } from 'vs/base/common/event';
 import { IEditorViewState } from 'vs/editor/common/editorCommon';
@@ -61,11 +60,10 @@ export class FileEditorInput extends AbstractTextResourceEditorInput implements 
 		@ITextModelService private readonly textModelResolverService: ITextModelService,
 		@ILabelService labelService: ILabelService,
 		@IFileService fileService: IFileService,
-		@IFilesConfigurationService filesConfigurationService: IFilesConfigurationService,
-		@IEditorService editorService: IEditorService,
-		@IEditorGroupsService editorGroupService: IEditorGroupsService
+		@IFilesConfigurationService private readonly filesConfigurationService: IFilesConfigurationService,
+		@IEditorService editorService: IEditorService
 	) {
-		super(resource, preferredResource, editorService, editorGroupService, textFileService, labelService, fileService, filesConfigurationService);
+		super(resource, preferredResource, editorService, textFileService, labelService, fileService);
 
 		this.model = this.textFileService.files.get(resource);
 
@@ -85,17 +83,13 @@ export class FileEditorInput extends AbstractTextResourceEditorInput implements 
 			this.setPreferredMode(preferredMode);
 		}
 
+		// Attach to model that matches our resource once created
+		this._register(this.textFileService.files.onDidCreate(model => this.onDidCreateTextFileModel(model)));
+
 		// If a file model already exists, make sure to wire it in
 		if (this.model) {
 			this.registerModelListeners(this.model);
 		}
-	}
-
-	protected override registerListeners(): void {
-		super.registerListeners();
-
-		// Attach to model that matches our resource once created
-		this._register(this.textFileService.files.onDidCreate(model => this.onDidCreateTextFileModel(model)));
 	}
 
 	private onDidCreateTextFileModel(model: ITextFileEditorModel): void {
